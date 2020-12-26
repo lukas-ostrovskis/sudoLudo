@@ -74,6 +74,19 @@
     top: 50%;
     height: 550px;
     width: 550px;
+    z-index:4;
+  }
+  .hidden-btn {
+    position: absolute;
+    top: 80%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+
+    display: none;
+    height: 20px;
+    width: 100px;
+    z-index:4;
   }
 
   .statistics {
