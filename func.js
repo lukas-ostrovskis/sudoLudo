@@ -9,28 +9,22 @@ var diceModule = ( function(){
         },
         rollDice: function(){
             currentVal = Math.ceil(Math.random()*6);
+            console.log(currentVal);
         }
     }
 })();
 
-var playerOneModule = (function(nameInput) {
+function Player(name) {
+    this.score = 0;
+    this.name = name;
+    
+    this.incScore = function() { this.score++ };
+    this.getScore = function() { return this.score};
+    this.resetScore = function() { this.score = 0 };
+}
 
-    var score = 0;
-    var name = nameInput;
-    var figure1 = new Figure();
-    var figure2 = new Figure();
-    var figure3 = new Figure();
-    var figure4 = new Figure();
-    return{
-          incScore: function(){
-              score++;
-          },
-          getScore: function(){
-              return score;
-          }
-    }
-});
+let p1 = new Player("Test1");
+let p2 = new Player("Test2");
 
-// usage new (Player())();
-
-
+const diceRef = document.querySelector(".dice");
+diceRef.addEventListener('click', diceModule.rollDice);
