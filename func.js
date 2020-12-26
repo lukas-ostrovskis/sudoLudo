@@ -9,7 +9,7 @@ var diceModule = ( function(){
         },
         rollDice: function(){
             currentVal = Math.ceil(Math.random()*6);
-            console.log(currentVal);
+            moveFig(currentVal);
         }
     }
 })();
@@ -67,6 +67,40 @@ function initFigures(figRef, homePos, startPos, offset) {
     return fig;
 }
 
+function moveFig(currentVal) {
+    console.log(currentVal);
+    if(p1Turn) {
+        console.log("PLAYER 1");
+        for(let i = 0; i < 4; i++) {
+            // If Player1 figure is 'in the 'base' and the player rolls a 6 the figure can be moved
+            if(p1.figures[i].getCurrPos() >= 47 && p1.figures[i].getCurrPos() <= 50 && currentVal == 6) {
+                console.log(i + " can move");
+            }
+            // The limit within the Player1 figure can move
+            else if(p1.figures[i].getCurrPos()+currentVal <= 47) {
+                console.log(i + " can move");
+            }
+            else console.log(i + " can't move");
+        }
+    }
+    else {
+        console.log("PLAYER 2");
+        for(let i = 0; i < 4; i++) {
+            // If Player2 figure is 'in the 'base' and the player rolls a 6 the figure can be moved
+            if(p2.figures[i].getCurrPos() >= 51 && p2.figures[i].getCurrPos() <= 54 && currentVal == 6) {
+                console.log(i + " can move");
+            }
+            // The limit within the Player2 figure can move
+            else if(p2.figures[i].getCurrPos()+currentVal <= 42) {
+                console.log(i + " can move");
+            }
+            else console.log(i + " can't move");
+        }
+    }
+    
+    if(currentVal != 6) p1Turn = !p1Turn;
+}
+
 const game = document.querySelector('.game');
 const gridContainer = game.querySelector('.grid-container');
 const grid = gridContainer.querySelectorAll('div');
@@ -75,8 +109,13 @@ const figRef2 = gridContainer.querySelectorAll('.dot2');
 
 let homePos = homePositions(gridContainer, figRef1, figRef2);
 
+const diceRef = document.querySelector(".dice");
+diceRef.addEventListener('click', diceModule.rollDice);
+
 let p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
 let p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
 
-const diceRef = document.querySelector(".dice");
-diceRef.addEventListener('click', diceModule.rollDice);
+let p1Turn = true;
+
+
+
