@@ -6,10 +6,12 @@ function Figure(homePos, startPos, ref) {
 
     this.currPos = homePos;
     this.leaveBase = function() {
+        // @ts-ignore
         gridContainer.querySelector('.div' + startPos).appendChild(this.ref);
         this.currPos = startPos;
     }
     this.setCurrPos = function(pos){   
+        // @ts-ignore
         gridContainer.querySelector('.div' + pos).appendChild(this.ref);
         // checkAlreadyOccupied(pos);
         this.currPos = pos;
