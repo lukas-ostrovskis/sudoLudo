@@ -23,6 +23,34 @@
           background-color: #002b36;
           border-radius: 7px;
         }
+
+        .dot1 {
+        height: 70%;
+        width: 70%;
+        display: inline-block;
+        background-color: #74c234;
+        border-radius: 50%;
+
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .dot2 {
+        height: 70%;
+        width: 70%;
+        display: inline-block;
+        background-color: #6692be;
+        border-radius: 50%;
+
+        position: relative;
+        top: 50%;
+        left: 50%;
+        margin-right: -50%;
+        transform: translate(-50%, -50%);
+      }
         
         .grid-container {
           display: grid;
@@ -100,6 +128,7 @@
         .div53 { grid-area: 2 / 7 / 3 / 8; }
         .div54 { grid-area: 1 / 7 / 2 / 8; }
       </style>
+      <script src="figures.js" defer></script>
   </head>
   <body>
     <div class="game">
@@ -150,14 +179,30 @@
           <div class="div44"> </div>
           <div class="div45"> </div>
           <div class="div46"> </div>
-          <div class="div47"> </div>
-          <div class="div48"> </div>
-          <div class="div49"> </div>
-          <div class="div50"> </div>
-          <div class="div51"> </div>
-          <div class="div52"> </div>
-          <div class="div53"> </div>
-          <div class="div54"> </div>
+          <div class="div47"> 
+            <span class="dot1"></span>
+          </div>
+          <div class="div48"> 
+            <span class="dot1"></span>
+          </div>
+          <div class="div49"> 
+            <span class="dot1"></span>
+          </div>
+          <div class="div50"> 
+            <span class="dot1"></span>
+          </div>
+          <div class="div51"> 
+            <span class="dot2"></span>
+          </div>
+          <div class="div52"> 
+            <span class="dot2"></span>
+          </div>
+          <div class="div53"> 
+            <span class="dot2"></span>
+          </div>
+          <div class="div54"> 
+            <span class="dot2"></span>
+          </div>
         </div>
       </div>
   </body>
