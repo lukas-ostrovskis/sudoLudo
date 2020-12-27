@@ -14,6 +14,11 @@ var diceModule = ( function(){
     }
 })();
 
+/**
+ * 
+ * @param {*} name - name of the player
+ * @param {*} figures - reference to a figures of a player 
+ */
 function Player(name, figures) {
     this.score = 0;
     this.name = name;
@@ -24,6 +29,12 @@ function Player(name, figures) {
     this.resetScore = function() { this.score = 0 };
 }
 
+/**
+ * 
+ * @param {*} homePos - home position of the figure (position in the base)
+ * @param {*} startPos - first position after the base position
+ * @param {*} ref - reference of the figure.
+ */
 function Figure(homePos, startPos, ref) {
     this.homePos = homePos;
     this.ref = ref;
@@ -44,6 +55,12 @@ function Figure(homePos, startPos, ref) {
     this.getCurrPos = function(){ return this.currPos};
 }
 
+/**
+ * 
+ * @param {*} gridContainer - div which contains grids
+ * @param {*} figRef1 - array of references to html of figures of player 1
+ * @param {*} figRef2 - array of references to html of figures of player 2
+ */
 function homePositions(gridContainer, figRef1, figRef2) {
     let figureHomePositions = [];
 
@@ -57,6 +74,13 @@ function homePositions(gridContainer, figRef1, figRef2) {
     return figureHomePositions;
 }
 
+/**
+ * Initializes the figures, attaches homePosition to each figure, starting position.
+ * @param {*} figRef - array of references to hrml of figures of player
+ * @param {*} homePos - array of homePos. length 8
+ * @param {*} startPos - starting position of figures
+ * @param {*} offset - offset to distinguish between figures of player 1
+ */
 function initFigures(figRef, homePos, startPos, offset) {
     let fig = [];
 
@@ -67,6 +91,10 @@ function initFigures(figRef, homePos, startPos, offset) {
     return fig;
 }
 
+/**
+ * Moves the figure by the currentVal if the move is legal
+ * @param {} currentVal - value by which the figure should be moved
+ */
 function moveFig(currentVal) {
     console.log(currentVal);
     if(p1Turn) {
@@ -101,6 +129,7 @@ function moveFig(currentVal) {
     if(currentVal != 6) p1Turn = !p1Turn;
 }
 
+
 const game = document.querySelector('.game');
 const gridContainer = game.querySelector('.grid-container');
 const grid = gridContainer.querySelectorAll('div');
@@ -116,6 +145,3 @@ let p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
 let p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
 
 let p1Turn = true;
-
-
-
