@@ -14,6 +14,7 @@ var diceModule = ( function(){
         rollDice: function(){
             currentVal = Math.ceil(Math.random()*6);
             rolled = true;
+            document.querySelector(".dice").innerHTML = currentVal;
             moveFig(currentVal);
         }
     }
