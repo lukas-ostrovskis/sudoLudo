@@ -29,6 +29,14 @@ function Player(name, figures) {
     this.resetScore = function() { this.score = 0 };
 }
 
+function resetMoveAvailability(){
+    console.log("resetting...")
+}
+
+function stopBlinking(){
+    console.log(p1.figures);
+}
+
 /**
  * 
  * @param {*} homePos - home position of the figure (position in the base)
@@ -40,6 +48,16 @@ function Figure(homePos, startPos, ref) {
     this.ref = ref;
     this.startPos = startPos;
     this.canMove = false;
+
+    //if can move, 
+    this.ref.addEventListener("click", function(){
+        if(this.canMove){
+            console.log("clicked");
+            this.setCurrPos(diceModule.currentValue());
+            resetMoveAvailability();
+            stopBlinking();
+        }
+    });
 
     this.currPos = homePos;
     this.leaveBase = function() {
@@ -105,6 +123,7 @@ function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
         else p.figures[i].canMove = false;
     }
 
+    // adds the animation on the figures that can move
     for(let i = 0; i < 4; i++) {
         if(p.figures[i].canMove) {
             console.log(p.figures[i].ref);
@@ -113,7 +132,7 @@ function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
 }
 
 /**
- * Moves the figure by the currentVal if the move is legal
+ * Determines the move availability of each player by their turn.
  * @param {} currentVal - value by which the figure should be moved
  */
 function moveFig(currentVal) {
