@@ -29,13 +29,27 @@ function Player(name, figures) {
     this.resetScore = function() { this.score = 0 };
 }
 
-function resetMoveAvailability(){
+function resetFigState(){
     console.log("resetting...")
+    for(let i = 0; i < 4; i++) {
+        p1.figures[i].canMove = false;
+        p1.figures[i].ref.style.animation = "none";
+        p2.figures[i].canMove = false;
+        p2.figures[i].ref.style.animation = "none";
+    }
 }
 
-function stopBlinking(){
-    console.log(p1.figures);
+function checkCollisions(figure) {
+    for(let i = 0; i < 4; i++) {
+        if(p1.figures[i] != figure && p1.figures[i].startPos != figure.startPos && p1.figures[i].getCurrPos() == figure.getCurrPos()) {
+            p1.figures[i].setCurrPos(p1.figures[i].homePos);
+        }
+        if(p2.figures[i] != figure && p2.figures[i].startPos != figure.startPos && p2.figures[i].getCurrPos() == figure.getCurrPos()) {
+            p2.figures[i].setCurrPos(p2.figures[i].homePos);
+        }
+    }
 }
+
 
 /**
  * 
@@ -48,18 +62,8 @@ function Figure(homePos, startPos, ref) {
     this.ref = ref;
     this.startPos = startPos;
     this.canMove = false;
-
-    //if can move, 
-    this.ref.addEventListener("click", function(){
-        if(this.canMove){
-            console.log("clicked");
-            this.setCurrPos(diceModule.currentValue());
-            resetMoveAvailability();
-            stopBlinking();
-        }
-    });
-
     this.currPos = homePos;
+
     this.leaveBase = function() {
         // @ts-ignore
         gridContainer.querySelector('.div' + startPos).appendChild(this.ref);
@@ -72,6 +76,29 @@ function Figure(homePos, startPos, ref) {
         this.currPos = pos;
     };
     this.getCurrPos = function(){ return this.currPos};
+
+    //if can move, 
+    this.action = function() {
+        var that = this;
+        this.ref.addEventListener("click", function(){
+            if(that.canMove){
+                if(that.currPos == that.homePos) that.leaveBase();
+                else if(that.startPos == 19) {
+                    if(that.currPos >= 19 && that.currPos <= 36 && that.currPos + diceModule.currentValue() > 36) that.setCurrPos(that.currPos + diceModule.currentValue() - 36);
+                    else if(that.currPos >= 1 && that.currPos <= 17 && that.currPos + diceModule.currentValue() > 17) that.setCurrPos(36 + diceModule.currentValue() - (17-that.currPos));
+                    else that.setCurrPos(that.currPos + diceModule.currentValue());
+                } 
+                else if(that.startPos == 1) {
+                    if(that.currPos <= 35 && that.currPos + diceModule.currentValue() > 35) that.setCurrPos(41 + diceModule.currentValue() - (35-that.currPos));
+                    else that.setCurrPos(that.currPos + diceModule.currentValue());
+                }
+                
+                checkCollisions(that);
+                resetFigState();
+            }
+        });
+    
+    }
 }
 
 /**
@@ -105,6 +132,7 @@ function initFigures(figRef, homePos, startPos, offset) {
 
     for(let i = 0; i < 4; i++) {
         fig.push(new Figure(homePos[i+offset], startPos, figRef[i]));
+        fig[i].action();
     } 
 
     return fig;
@@ -126,7 +154,7 @@ function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
     // adds the animation on the figures that can move
     for(let i = 0; i < 4; i++) {
         if(p.figures[i].canMove) {
-            console.log(p.figures[i].ref);
+            p.figures[i].ref.style.animation = "blink 1s infinite";
         }
     }
 }
