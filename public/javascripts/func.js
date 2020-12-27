@@ -14,7 +14,13 @@ var diceModule = ( function(){
         rollDice: function(){
             currentVal = Math.ceil(Math.random()*6);
             rolled = true;
-            document.querySelector(".dice").innerHTML = currentVal;
+            if(currentVal === 1) document.querySelector(".diceImg").src = "dice/dice-six-faces-one.png";
+            if(currentVal === 2) document.querySelector(".diceImg").src = "dice/dice-six-faces-two.png";
+            if(currentVal === 3) document.querySelector(".diceImg").src = "dice/dice-six-faces-three.png";
+            if(currentVal === 4) document.querySelector(".diceImg").src = "dice/dice-six-faces-four.png";
+            if(currentVal === 5) document.querySelector(".diceImg").src= "dice/dice-six-faces-five.png";
+            if(currentVal === 6) document.querySelector(".diceImg").src = "dice/dice-six-faces-six.png";
+            console.log(currentVal);
             moveFig(currentVal);
         }
     }
