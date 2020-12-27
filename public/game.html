@@ -7,11 +7,15 @@
     <link rel="stylesheet" href="styles.css">
 
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Ubuntu:wght@500&display=swap');
+    </style>
+
+    <style>
         body {
           background-color: #323845;
         }
 
-        .game {
+        .terminal {
           position: absolute;
           top: 50%;
           left: 50%;
@@ -19,14 +23,51 @@
           transform: translate(-50%, -50%);
   
           width: 53vw;
-          height: 80vh;
+          height: 82vh;
           min-width: 300px;
           min-height: 300px;
           max-width: calc(100vw - 2em);
           max-height: calc(100vh - 2em);
           /* border: 1px solid red; */
-          background-color: #002b36;
+          background-color:#dddad6;
           border-radius: 7px;
+
+          box-shadow: 10px -7px 20px -4px rgba(0,0,0,0.75);
+        }
+
+        .whiteTab {
+          position: absolute;
+          top: 4.9%;
+          
+          width: 100%;
+          height: 3%;
+          
+          background-color: #f6f5f4;
+          border-top: 1px solid #b4b1ae;
+        }
+
+        .scrollBar {
+          position: absolute;
+          left: 99.3%;
+          top: 8.5%;
+          
+          width: 0.4%;
+          height: 90%;
+          
+          background-color: #828586;
+          /* border: 1px solid red; */
+          border-radius: 2px;
+        }
+
+        .game {
+          position: relative;
+          top: 54%;
+          left: 49.47%;
+
+          width: 99%;
+          height: 92%;
+          background-color: #002b36;
+          border-radius: 0px;
         }
 
         .dice {
@@ -38,6 +79,26 @@
             background-color: white;
             border: 1px solid red;
             border-radius: 10%
+        }
+        
+        .timerBox {
+            position: absolute;
+            top: 70%;
+            left: 80%;
+            width: 10%;
+            height: 5%;
+            /* border: 1px solid red; */
+        }
+        
+        .timer {
+          position: absolute;
+          top: 0%;
+          left: 50%;
+
+
+          color: #74c234;
+          font-family: 'Ubuntu', sans-serif;
+          font-size: 2.5vmin;
         }
 
         @keyframes blink {
@@ -94,7 +155,7 @@
         }
   
         div.grid-container > div {
-          border: 2px solid white;
+          border: 1px solid white;
         }
   
         .div1 { grid-area: 15 / 2 / 16 / 3; }
@@ -155,83 +216,87 @@
       <script src="javascripts\func.js" defer></script>
   </head>
   <body>
-    <div class="game">
-        <div class="dice">
-
+    <div class="terminal">
+      <div class="whiteTab"></div>
+      <div class="scrollBar"></div>
+        <div class="game">
+          <div class="dice"></div>
+          <div class="grid-container">
+            <div class="div1"> </div>
+            <div class="div2"> </div>
+            <div class="div3"> </div>
+            <div class="div4"> </div>
+            <div class="div5"> </div>
+            <div class="div6"> </div>
+            <div class="div7"> </div>
+            <div class="div8"> </div>
+            <div class="div9"> </div>
+            <div class="div10"> </div>
+            <div class="div11"> </div>
+            <div class="div12"> </div>
+            <div class="div13"> </div>
+            <div class="div14"> </div>
+            <div class="div15"> </div>
+            <div class="div16"> </div>
+            <div class="div17"> </div>
+            <div class="div18"> </div>
+            <div class="div19"> </div>
+            <div class="div20"> </div>
+            <div class="div21"> </div>
+            <div class="div22"> </div>
+            <div class="div23"> </div>
+            <div class="div24"> </div>
+            <div class="div25"> </div>
+            <div class="div26"> </div>
+            <div class="div27"> </div>
+            <div class="div28"> </div>
+            <div class="div29"> </div>
+            <div class="div30"> </div>
+            <div class="div31"> </div>
+            <div class="div32"> </div>
+            <div class="div33"> </div>
+            <div class="div34"> </div>
+            <div class="div35"> </div>
+            <div class="div36"> </div>
+            <div class="div37"> </div>
+            <div class="div38"> </div>
+            <div class="div39"> </div>
+            <div class="div40"> </div>
+            <div class="div41"> </div>
+            <div class="div42"> </div>
+            <div class="div43"> </div>
+            <div class="div44"> </div>
+            <div class="div45"> </div>
+            <div class="div46"> </div>
+            <div class="div47"> 
+              <span class="dot1"></span>
+            </div>
+            <div class="div48"> 
+              <span class="dot1"></span>
+            </div>
+            <div class="div49"> 
+              <span class="dot1"></span>
+            </div>
+            <div class="div50"> 
+              <span class="dot1"></span>
+            </div>
+            <div class="div51"> 
+              <span class="dot2"></span>
+            </div>
+            <div class="div52"> 
+              <span class="dot2"></span>
+            </div>
+            <div class="div53"> 
+              <span class="dot2"></span>
+            </div>
+            <div class="div54"> 
+              <span class="dot2"></span>
+            </div>
+          </div>
         </div>
-        <div class="grid-container">
-          <div class="div1"> </div>
-          <div class="div2"> </div>
-          <div class="div3"> </div>
-          <div class="div4"> </div>
-          <div class="div5"> </div>
-          <div class="div6"> </div>
-          <div class="div7"> </div>
-          <div class="div8"> </div>
-          <div class="div9"> </div>
-          <div class="div10"> </div>
-          <div class="div11"> </div>
-          <div class="div12"> </div>
-          <div class="div13"> </div>
-          <div class="div14"> </div>
-          <div class="div15"> </div>
-          <div class="div16"> </div>
-          <div class="div17"> </div>
-          <div class="div18"> </div>
-          <div class="div19"> </div>
-          <div class="div20"> </div>
-          <div class="div21"> </div>
-          <div class="div22"> </div>
-          <div class="div23"> </div>
-          <div class="div24"> </div>
-          <div class="div25"> </div>
-          <div class="div26"> </div>
-          <div class="div27"> </div>
-          <div class="div28"> </div>
-          <div class="div29"> </div>
-          <div class="div30"> </div>
-          <div class="div31"> </div>
-          <div class="div32"> </div>
-          <div class="div33"> </div>
-          <div class="div34"> </div>
-          <div class="div35"> </div>
-          <div class="div36"> </div>
-          <div class="div37"> </div>
-          <div class="div38"> </div>
-          <div class="div39"> </div>
-          <div class="div40"> </div>
-          <div class="div41"> </div>
-          <div class="div42"> </div>
-          <div class="div43"> </div>
-          <div class="div44"> </div>
-          <div class="div45"> </div>
-          <div class="div46"> </div>
-          <div class="div47"> 
-            <span class="dot1"></span>
-          </div>
-          <div class="div48"> 
-            <span class="dot1"></span>
-          </div>
-          <div class="div49"> 
-            <span class="dot1"></span>
-          </div>
-          <div class="div50"> 
-            <span class="dot1"></span>
-          </div>
-          <div class="div51"> 
-            <span class="dot2"></span>
-          </div>
-          <div class="div52"> 
-            <span class="dot2"></span>
-          </div>
-          <div class="div53"> 
-            <span class="dot2"></span>
-          </div>
-          <div class="div54"> 
-            <span class="dot2"></span>
-          </div>
-        </div>
+      <div class="timerBox">
+        <p class="timer"></p>
       </div>
-      <h2 class="timer"></h2>
+    </div>
   </body>
 </html>
