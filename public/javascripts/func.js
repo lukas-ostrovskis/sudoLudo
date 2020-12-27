@@ -2,13 +2,18 @@
 
 var diceModule = ( function(){
     var currentVal = 6;
+    var rolled = false;
 
     return {
+        getStatus: function() {
+            return rolled;
+        },
         currentValue: function(){
             return currentVal;
         },
         rollDice: function(){
             currentVal = Math.ceil(Math.random()*6);
+            rolled = true;
             moveFig(currentVal);
         }
     }
@@ -81,16 +86,33 @@ function Figure(homePos, startPos, ref) {
     this.action = function() {
         var that = this;
         this.ref.addEventListener("click", function(){
+            if(diceModule.getStatus()){
+                document.getElementById("dice").style.pointerEvents = "auto";
+            }
             if(that.canMove){
                 if(that.currPos == that.homePos) that.leaveBase();
                 else if(that.startPos == 19) {
                     if(that.currPos >= 19 && that.currPos <= 36 && that.currPos + diceModule.currentValue() > 36) that.setCurrPos(that.currPos + diceModule.currentValue() - 36);
                     else if(that.currPos >= 1 && that.currPos <= 17 && that.currPos + diceModule.currentValue() > 17) that.setCurrPos(36 + diceModule.currentValue() - (17-that.currPos));
                     else that.setCurrPos(that.currPos + diceModule.currentValue());
+
+                    if(that.currPos == 42) {
+                        that.ref.style.display = "none";
+                        p2.incScore();
+                        score2.innerHTML = "Player 2 score: " + p2.getScore() + "/4";
+
+                    } 
                 } 
                 else if(that.startPos == 1) {
                     if(that.currPos <= 35 && that.currPos + diceModule.currentValue() > 35) that.setCurrPos(41 + diceModule.currentValue() - (35-that.currPos));
                     else that.setCurrPos(that.currPos + diceModule.currentValue());
+
+                    if(that.currPos == 47) {
+                        that.ref.style.display = "none";
+                        p1.incScore();
+                        score1.innerHTML = "Player 1 score: " + p1.getScore() + "/4";
+                    }
+                    
                 }
                 
                 checkCollisions(that);
@@ -141,7 +163,7 @@ function initFigures(figRef, homePos, startPos, offset) {
 function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
     for(let i = 0; i < 4; i++) {
         // If Player figure is 'in the 'base' and the player rolls a 6 the figure can be moved
-        if(p.figures[i].getCurrPos() >= baseStart && p1.figures[i].getCurrPos() <= baseEnd && currentVal == 6) {
+        if(p.figures[i].getCurrPos() >= baseStart && p.figures[i].getCurrPos() <= baseEnd && currentVal == 6) {
             p.figures[i].canMove = true;
         }
         // The limit within the Player figure can move
@@ -149,6 +171,14 @@ function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
             p.figures[i].canMove = true;
         }
         else p.figures[i].canMove = false;
+    }
+    
+    document.getElementById("dice").style.pointerEvents = "auto";
+    //If at least one of the figures can move don't allow another player to roll the dice.
+    for(let i = 0; i < 4; i++){
+        if(p.figures[i].canMove){
+            document.getElementById("dice").style.pointerEvents = "none";
+        }
     }
 
     // adds the animation on the figures that can move
@@ -176,6 +206,7 @@ function moveFig(currentVal) {
     }
     
     if(currentVal != 6) p1Turn = !p1Turn;
+    
 }
 
 var timer = document.querySelector('.timer');
@@ -201,10 +232,19 @@ const figRef2 = gridContainer.querySelectorAll('.dot2');
 let homePos = homePositions(gridContainer, figRef1, figRef2);
 
 const diceRef = document.querySelector(".dice");
-diceRef.addEventListener('click', diceModule.rollDice);
+//diceRef.addEventListener('click', diceModule.rollDice);
+diceRef.addEventListener('click', function(){
+    document.getElementById("dice").style.pointerEvents = "none";
+    diceModule.rollDice();
+});
+
+
 
 let p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
 let p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
+
+let score1 = document.getElementById("score1");
+let score2 = document.getElementById("score2");
 
 let p1Turn = true;
 
