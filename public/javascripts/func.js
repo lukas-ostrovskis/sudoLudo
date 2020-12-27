@@ -129,6 +129,22 @@ function moveFig(currentVal) {
     if(currentVal != 6) p1Turn = !p1Turn;
 }
 
+function 
+
+
+var timer = document.querySelector('.timer');
+timeFunction();
+
+function timeFunction(){
+    var seconds = 0;
+    setInterval(function(){
+        seconds++
+        timer.innerHTML = "time:" + Math.floor(seconds / 3600) + "." + Math.floor(seconds / 60) + "." + seconds;
+        console.log(seconds);
+        console.log(Math.floor(seconds / 60));
+    }, 1000);
+}
+
 
 const game = document.querySelector('.game');
 const gridContainer = game.querySelector('.grid-container');
@@ -145,3 +161,9 @@ let p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
 let p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
 
 let p1Turn = true;
+
+
+
+
+
+    
