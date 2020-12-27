@@ -217,7 +217,7 @@ function timeFunction(){
     var seconds = 0;
     setInterval(function(){
         seconds++;
-        timer.innerHTML = "time:" + Math.floor(seconds / 3600)%24 + "." + Math.floor(seconds / 60)%60 + "." + seconds%60;
+        timer.innerHTML = '<span style="color: #74c234">root@covm</span><span style="color: white">:</span><span style="color: #6692be">~/sudoLudo</span>\ngametime: ' + Math.floor(seconds / 3600)%24 + "." + Math.floor(seconds / 60)%60 + "." + seconds%60;
         // console.log(seconds);
         // console.log(Math.floor(seconds / 60));
     }, 1000);
