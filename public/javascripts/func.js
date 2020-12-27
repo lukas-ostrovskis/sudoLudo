@@ -137,8 +137,8 @@ timeFunction();
 function timeFunction(){
     var seconds = 0;
     setInterval(function(){
-        seconds++
-        timer.innerHTML = "time:" + Math.floor(seconds / 3600) + "." + Math.floor(seconds / 60) + "." + seconds;
+        seconds++;
+        timer.innerHTML = "time:" + Math.floor(seconds / 3600)%24 + "." + Math.floor(seconds / 60)%60 + "." + seconds%60;
         // console.log(seconds);
         // console.log(Math.floor(seconds / 60));
     }, 1000);
