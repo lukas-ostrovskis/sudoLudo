@@ -39,6 +39,7 @@ function Figure(homePos, startPos, ref) {
     this.homePos = homePos;
     this.ref = ref;
     this.startPos = startPos;
+    this.canMove = false;
 
     this.currPos = homePos;
     this.leaveBase = function() {
@@ -91,6 +92,26 @@ function initFigures(figRef, homePos, startPos, offset) {
     return fig;
 }
 
+function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
+    for(let i = 0; i < 4; i++) {
+        // If Player figure is 'in the 'base' and the player rolls a 6 the figure can be moved
+        if(p.figures[i].getCurrPos() >= baseStart && p1.figures[i].getCurrPos() <= baseEnd && currentVal == 6) {
+            p.figures[i].canMove = true;
+        }
+        // The limit within the Player figure can move
+        else if(p.figures[i].getCurrPos()+currentVal <= gameEnd) {
+            p.figures[i].canMove = true;
+        }
+        else p.figures[i].canMove = false;
+    }
+
+    for(let i = 0; i < 4; i++) {
+        if(p.figures[i].canMove) {
+            console.log(p.figures[i].ref);
+        }
+    }
+}
+
 /**
  * Moves the figure by the currentVal if the move is legal
  * @param {} currentVal - value by which the figure should be moved
@@ -98,39 +119,17 @@ function initFigures(figRef, homePos, startPos, offset) {
 function moveFig(currentVal) {
     console.log(currentVal);
     if(p1Turn) {
+        moveAvailability(p1, currentVal, 47, 50, 47);
         console.log("PLAYER 1");
-        for(let i = 0; i < 4; i++) {
-            // If Player1 figure is 'in the 'base' and the player rolls a 6 the figure can be moved
-            if(p1.figures[i].getCurrPos() >= 47 && p1.figures[i].getCurrPos() <= 50 && currentVal == 6) {
-                console.log(i + " can move");
-            }
-            // The limit within the Player1 figure can move
-            else if(p1.figures[i].getCurrPos()+currentVal <= 47) {
-                console.log(i + " can move");
-            }
-            else console.log(i + " can't move");
-        }
+        
     }
     else {
+        moveAvailability(p2, currentVal, 51, 54, 42);
         console.log("PLAYER 2");
-        for(let i = 0; i < 4; i++) {
-            // If Player2 figure is 'in the 'base' and the player rolls a 6 the figure can be moved
-            if(p2.figures[i].getCurrPos() >= 51 && p2.figures[i].getCurrPos() <= 54 && currentVal == 6) {
-                console.log(i + " can move");
-            }
-            // The limit within the Player2 figure can move
-            else if(p2.figures[i].getCurrPos()+currentVal <= 42) {
-                console.log(i + " can move");
-            }
-            else console.log(i + " can't move");
-        }
     }
     
     if(currentVal != 6) p1Turn = !p1Turn;
 }
-
-function 
-
 
 var timer = document.querySelector('.timer');
 timeFunction();
@@ -140,8 +139,8 @@ function timeFunction(){
     setInterval(function(){
         seconds++
         timer.innerHTML = "time:" + Math.floor(seconds / 3600) + "." + Math.floor(seconds / 60) + "." + seconds;
-        console.log(seconds);
-        console.log(Math.floor(seconds / 60));
+        // console.log(seconds);
+        // console.log(Math.floor(seconds / 60));
     }, 1000);
 }
 
