@@ -83,21 +83,39 @@
         
         .timerBox {
             position: absolute;
-            top: 90%;
-            left: 80%;
-            width: 10%;
-            height: 5%;
+            top: 80%;
+            left: 65%;
+            width: 17vmax;
+            height: 7vmax;
         }
         
         .timer {
-          position: absolute;
-          top: 0%;
-          left: 50%;
-
-
           color: white;
           font-family: 'Ubuntu', sans-serif;
-          font-size: 2.5vmin;
+          font-size: 1.3vmax;
+          word-wrap: break-word;
+        }
+
+        .score {
+            position: absolute;
+            left: 1%;
+
+            width: 17vmax;
+            height: 7vmax;
+        }
+
+        #score1 {
+            font-family: 'Ubuntu', sans-serif;
+            font-size: 1.2vmax;
+            color: white;
+            word-wrap: break-word;
+        }
+
+        #score2 {
+            font-family: 'Ubuntu', sans-serif;
+            font-size: 1.2vmax;
+            color: white;
+            word-wrap: break-word;
         }
 
         @keyframes blink {
@@ -218,11 +236,11 @@
     <div class="terminal">
       <div class="whiteTab"></div>
       <div class="scrollBar"></div>
-      <div class="score">
-        <h2 id="score1">Player 1 score: 0/4</h2>
-        <h2 id="score2">Player 2 score: 0/4</h2>
-      </div>
         <div class="game">
+          <div class="score">
+            <p id="score1"><span style="color: #74c234">Player1@covm</span><span style="color: white">:</span><span style="color: #6692be">~/sudoLudo</span><br>0/4</p>
+            <p id="score2"><span style="color: #74c234">Player2@covm</span><span style="color: white">:</span><span style="color: #6692be">~/sudoLudo</span><br>0/4</p>
+          </div>
           <div class="dice" id="dice"></div>
           <div class="grid-container">
             <div class="div1"> </div>
@@ -303,3 +321,4 @@
     </div>
   </body>
 </html>
+
