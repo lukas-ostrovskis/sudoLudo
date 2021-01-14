@@ -271,6 +271,9 @@ ws.onopen = function(event){
 ws.onerror = () => {
     console.log("failed");
 };
+ws.onmessage = (message) => {
+    console.log(message.data);
+}
 console.log("haha");
 
 // ws.onmessage = function (event) {
