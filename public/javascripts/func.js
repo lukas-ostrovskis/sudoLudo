@@ -18,7 +18,7 @@ var diceModule = ( function(){
             if(currentVal === 2) document.querySelector(".diceImg").src = "dice/dice-six-faces-two.png";
             if(currentVal === 3) document.querySelector(".diceImg").src = "dice/dice-six-faces-three.png";
             if(currentVal === 4) document.querySelector(".diceImg").src = "dice/dice-six-faces-four.png";
-            if(currentVal === 5) document.querySelector(".diceImg").src= "dice/dice-six-faces-five.png";
+            if(currentVal === 5) document.querySelector(".diceImg").src = "dice/dice-six-faces-five.png";
             if(currentVal === 6) document.querySelector(".diceImg").src = "dice/dice-six-faces-six.png";
             console.log(currentVal);
             moveFig(currentVal);
@@ -35,6 +35,7 @@ function Player(name, figures) {
     this.score = 0;
     this.name = name;
     this.figures = figures;
+
     
     this.incScore = function() { this.score++ };
     this.getScore = function() { return this.score};
@@ -250,12 +251,40 @@ diceRef.addEventListener('click', function(){
 let p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
 let p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
 
+
+
 let score1 = document.getElementById("score1");
 let score2 = document.getElementById("score2");
 
 let p1Turn = true;
 
 
+let ws = new WebSocket("ws://localhost:3000");
+
+
+//ws for local connections
+
+ws.onopen = function(event){
+    console.log("game started");
+}
+
+ws.onerror = () => {
+    console.log("failed");
+};
+console.log("haha");
+
+// ws.onmessage = function (event) {
+//     var msg = JSON.parse(event.data);
+//     switch (msg.type) {
+//         case "something":
+            
+//             break;
+    
+//         default:
+//             break;
+//     }
+//     console.log(event.data);
+// }
 
 
 
