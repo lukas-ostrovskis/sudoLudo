@@ -9,9 +9,9 @@ var diceModule = ( function(){
             return rolled;
         },
         setValue: function(value){
-            console.log(value);
+            console.log("value " + value);
             currentVal = value;
-            if(value === 1) document.querySelector(".diceImg").src = "dice/dice-six-faces-one.png";
+            if(currentVal === 1) document.querySelector(".diceImg").src = "dice/dice-six-faces-one.png";
             if(currentVal === 2) document.querySelector(".diceImg").src = "dice/dice-six-faces-two.png";
             if(currentVal === 3) document.querySelector(".diceImg").src = "dice/dice-six-faces-three.png";
             if(currentVal === 4) document.querySelector(".diceImg").src = "dice/dice-six-faces-four.png";
@@ -32,11 +32,9 @@ var diceModule = ( function(){
             if(currentVal === 6) document.querySelector(".diceImg").src = "dice/dice-six-faces-six.png";
             console.log(currentVal);
             moveFig(currentVal);
-            let json_ob = {
-                value: currentVal,
-                type: "diceValue"
-            }
-            ws.send(JSON.stringify(json_ob));
+            let outgoingMsg = Messages.DICE_VALUE;
+            outgoingMsg.data = currentVal;
+            ws.send(JSON.stringify(outgoingMsg));
         }
     }
 })();
@@ -85,14 +83,17 @@ function checkCollisions(figure) {
  * @param {*} homePos - home position of the figure (position in the base)
  * @param {*} startPos - first position after the base position
  * @param {*} ref - reference of the figure.
+ * @param {*} id - figure id
  */
-function Figure(homePos, startPos, ref) {
+function Figure(homePos, startPos, ref, id) {
+    this.id = id; // Figure id to easily find the right figure object when it's passed through the websocket
     this.homePos = homePos;
     this.ref = ref;
     this.startPos = startPos;
     this.canMove = false;
     this.currPos = homePos;
 
+    this.getId = function() { return this.id };
     this.leaveBase = function() {
         // @ts-ignore
         gridContainer.querySelector('.div' + startPos).appendChild(this.ref);
@@ -104,7 +105,35 @@ function Figure(homePos, startPos, ref) {
         // checkAlreadyOccupied(pos);
         this.currPos = pos;
     };
-    this.getCurrPos = function(){ return this.currPos};
+    // Calculates the right setCurrPos position for the figure based on the dice value
+    this.calculatePos = function() {
+        if(this.currPos == this.homePos) this.leaveBase();
+        else if(this.startPos == 19) {
+            if(this.currPos >= 19 && this.currPos <= 36 && this.currPos + diceModule.currentValue() > 36) this.setCurrPos(this.currPos + diceModule.currentValue() - 36);
+            else if(this.currPos >= 1 && this.currPos <= 17 && this.currPos + diceModule.currentValue() > 17) this.setCurrPos(36 + diceModule.currentValue() - (17-this.currPos));
+            else this.setCurrPos(this.currPos + diceModule.currentValue());
+
+            if(this.currPos == 42) {
+                this.ref.style.display = "none";
+                p2.incScore();
+                score2.innerHTML = "Player 2 score: " + p2.getScore() + "/4";
+
+            } 
+        } 
+        else if(this.startPos == 1) {
+            if(this.currPos <= 35 && this.currPos + diceModule.currentValue() > 35) this.setCurrPos(41 + diceModule.currentValue() - (35-this.currPos));
+            else this.setCurrPos(this.currPos + diceModule.currentValue());
+
+            if(this.currPos == 47) {
+                this.ref.style.display = "none";
+                p1.incScore();
+                score1.innerHTML = "Player 1 score: " + p1.getScore() + "/4";
+            }
+        }
+    }
+    this.getCurrPos = function(){ return this.currPos };
+    this.getRef = function() { return this.ref };
+    this.receivedMove = function() { this.canMove = true }; // Manually makes canMove true for figure moves received from the server
 
     //if can move, 
     this.action = function() {
@@ -114,33 +143,14 @@ function Figure(homePos, startPos, ref) {
                 document.getElementById("dice").style.pointerEvents = "auto";
             }
             if(that.canMove){
-                if(that.currPos == that.homePos) that.leaveBase();
-                else if(that.startPos == 19) {
-                    if(that.currPos >= 19 && that.currPos <= 36 && that.currPos + diceModule.currentValue() > 36) that.setCurrPos(that.currPos + diceModule.currentValue() - 36);
-                    else if(that.currPos >= 1 && that.currPos <= 17 && that.currPos + diceModule.currentValue() > 17) that.setCurrPos(36 + diceModule.currentValue() - (17-that.currPos));
-                    else that.setCurrPos(that.currPos + diceModule.currentValue());
-
-                    if(that.currPos == 42) {
-                        that.ref.style.display = "none";
-                        p2.incScore();
-                        score2.innerHTML = "Player 2 score: " + p2.getScore() + "/4";
-
-                    } 
-                } 
-                else if(that.startPos == 1) {
-                    if(that.currPos <= 35 && that.currPos + diceModule.currentValue() > 35) that.setCurrPos(41 + diceModule.currentValue() - (35-that.currPos));
-                    else that.setCurrPos(that.currPos + diceModule.currentValue());
-
-                    if(that.currPos == 47) {
-                        that.ref.style.display = "none";
-                        p1.incScore();
-                        score1.innerHTML = "Player 1 score: " + p1.getScore() + "/4";
-                    }
-                    
-                }
-                
+                console.log(that.currPos);
+                console.log(diceModule.currentValue());
+                that.calculatePos(); // moved the logic from this event listener to calculatePos
                 checkCollisions(that);
                 resetFigState();
+                let outgoingMsg = Messages.O_CLICKED_FIG_REF; // If a figure that can be moved was clicked - send figure to the server
+                outgoingMsg.data = that;
+                ws.send(JSON.stringify(outgoingMsg));
             }
         });
     
@@ -177,7 +187,7 @@ function initFigures(figRef, homePos, startPos, offset) {
     let fig = [];
 
     for(let i = 0; i < 4; i++) {
-        fig.push(new Figure(homePos[i+offset], startPos, figRef[i]));
+        fig.push(new Figure(homePos[i+offset], startPos, figRef[i], i+offset));
         fig[i].action();
     } 
 
@@ -233,6 +243,18 @@ function moveFig(currentVal) {
     
 }
 
+// Finds and returns the figure object matching the provided id
+function findFig(id) {
+    for(let i = 0; i < 4; i++){
+        if(p1.figures[i].getId() == id){
+            return p1.figures[i];
+        }
+        else if(p2.figures[i].getId() == id) {
+            return p2.figures[i];
+        }
+    }
+}
+
 var timer = document.querySelector('.timer');
 timeFunction();
 
@@ -282,8 +304,6 @@ let ws = new WebSocket("ws://localhost:3000");
 p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
 p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
 
-let messages = require("./messages");
-console.log(messages);
 
 //ws for local connections
 
@@ -299,23 +319,26 @@ ws.onmessage = (message) => {
     console.log(message);
     let data = JSON.parse(message.data);
     switch (data.type) {
-        case "diceValue":
-            diceModule.setValue(data.value);
+        case Messages.T_PLAYER_TYPE:
+            if(message.data == "A") {
+                console.log(message.data);
+            }
+            else {
+                console.log(message.data);
+            }
+        case Messages.T_DICE_VALUE:
+            diceModule.setValue(data.data);
+            break;
+        case Messages.T_CLICKED_FIG_REF:
+            let fig = findFig(data.data.id); // Find the received figure by its id 
+            fig.receivedMove(); // Workaround, canMove disabled when move is received from the server so we need to manually enable it for this fig
+            fig.calculatePos(); // Update position of the received figure
+            console.log(fig);
             break;
     
         default:
             break;
     }
-    if(message.data === "p1"){
-        
-        let p1_flag = true;
-    }
-    if(message.data === "p2"){
-        p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
-        p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
-        let p1_flag = false;
-    }
-
 }
 
 

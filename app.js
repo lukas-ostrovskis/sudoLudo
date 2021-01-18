@@ -52,7 +52,7 @@ wss.on("connection", function connection(ws){
 
     console.log(playerType);
 
-    connection.send(playerType === "one" ? "p1" : "p2");
+    connection.send(playerType === "one" ? messages.S_PLAYER_A : messages.S_PLAYER_B);
 
 
 
@@ -66,20 +66,28 @@ wss.on("connection", function connection(ws){
         let currentGameObject = websockets[connection.id];
         let isPlayerOne = currentGameObject.playerOne === connection ? true : false;
         // TODO a link between client and server.
+        console.log(isPlayerOne);
         let data = JSON.parse(message);
         switch (data.type) {
-            case "diceValue":
+            case messages.T_DICE_VALUE:
                 if(isPlayerOne){
-                    currentGameObject.getPlayerTwo().send(JSON.stringify({type: "diceValue", value: data.value}));
-                    console.log(data.value);
+                    currentGameObject.getPlayerTwo().send(message);
+                    console.log(data.data);
                 }
-                if(!isPlayerOne){
-                    currentGameObject.getPlayerOne().send(JSON.stringify({type: "diceValue", value: data.value}));
-                    console.log(data.value);
+                else{
+                    currentGameObject.getPlayerOne().send(message);
+                    console.log(data.data);
                 }
                 break;
         
-            case "CLICKED_FIG_REF":
+            case messages.T_CLICKED_FIG_REF:
+                if(isPlayerOne){
+                    currentGameObject.getPlayerTwo().send(message);
+                }
+                else {
+                    currentGameObject.getPlayerOne().send(message);
+                }
+                break;
                 //if it got a dice roll and no legal move then change turn to another player,
                 //if there are legal moves then wait for CLICKED FIG REF.
             default:
