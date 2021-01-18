@@ -54,12 +54,19 @@ wss.on("connection", function connection(ws){
 
     connection.send(playerType === "one" ? messages.S_PLAYER_A : messages.S_PLAYER_B);
 
+    // if(playerType === "two"){
+        
+    // }
+
 
 
     //if current game already started then leave it as it is and assign current game a new Game
     if(currentGame.gameStarted()){
+        currentGame.getPlayerOne().send("gameStarted");
+        currentGame.getPlayerTwo().send("gameStarted");
         stats.onGoingGames++;
         currentGame = new Game(stats.gamesInitialized++);
+
     }
 
     connection.on("message", function incoming(message) {
@@ -67,16 +74,16 @@ wss.on("connection", function connection(ws){
         let isPlayerOne = currentGameObject.playerOne === connection ? true : false;
         // TODO a link between client and server.
         console.log(isPlayerOne);
-        let data = JSON.parse(message);
-        switch (data.type) {
+        let msg = JSON.parse(message);
+        switch (msg.type) {
             case messages.T_DICE_VALUE:
                 if(isPlayerOne){
                     currentGameObject.getPlayerTwo().send(message);
-                    console.log(data.data);
+                    console.log(msg.data);
                 }
                 else{
                     currentGameObject.getPlayerOne().send(message);
-                    console.log(data.data);
+                    console.log(msg.data);
                 }
                 break;
         

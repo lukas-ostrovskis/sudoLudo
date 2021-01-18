@@ -39,6 +39,18 @@ var diceModule = ( function(){
     }
 })();
 
+
+function GameState() {
+    this.playerType = null;
+    //turn value, denotes if it's client's move
+    this.turn = false;
+
+    this.setPlayerType = function(type) {this.playerType = type};
+    this.getPlayerType = function() {return this.playerType};
+    this.setTurn = function(turn) {this.turn = turn};
+    this.getTurn = function() {return this.turn};
+}
+
 /**
  * 
  * @param {*} name - name of the player
@@ -256,7 +268,7 @@ function findFig(id) {
 }
 
 var timer = document.querySelector('.timer');
-timeFunction();
+
 
 function timeFunction(){
     var seconds = 0;
@@ -304,6 +316,8 @@ let ws = new WebSocket("ws://localhost:3000");
 p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
 p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
 
+let gs = new GameState();
+
 
 //ws for local connections
 
@@ -316,21 +330,29 @@ ws.onerror = () => {
 };
 
 ws.onmessage = (message) => {
+    if(message.data === "gameStarted"){
+        timeFunction();
+    }
     console.log(message);
-    let data = JSON.parse(message.data);
-    switch (data.type) {
+    let msg = JSON.parse(message.data);
+    switch (msg.type) {
         case Messages.T_PLAYER_TYPE:
-            if(message.data == "A") {
-                console.log(message.data);
+            // if(message.data == "A") {
+            //     console.log(message.data);
+            // }
+            gs.setPlayerType(msg.data);
+            console.log(gs.getPlayerType());
+            if(msg.data === "A"){
+                gs.setTurn(true);
             }
             else {
-                console.log(message.data);
+                console.log(msg.data);
             }
         case Messages.T_DICE_VALUE:
-            diceModule.setValue(data.data);
+            diceModule.setValue(msg.data);
             break;
         case Messages.T_CLICKED_FIG_REF:
-            let fig = findFig(data.data.id); // Find the received figure by its id 
+            let fig = findFig(msg.data.id); // Find the received figure by its id 
             fig.receivedMove(); // Workaround, canMove disabled when move is received from the server so we need to manually enable it for this fig
             fig.calculatePos(); // Update position of the received figure
             console.log(fig);
