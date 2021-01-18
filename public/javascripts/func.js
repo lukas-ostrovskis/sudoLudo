@@ -8,6 +8,16 @@ var diceModule = ( function(){
         getStatus: function() {
             return rolled;
         },
+        setValue: function(value){
+            console.log(value);
+            currentVal = value;
+            if(value === 1) document.querySelector(".diceImg").src = "dice/dice-six-faces-one.png";
+            if(currentVal === 2) document.querySelector(".diceImg").src = "dice/dice-six-faces-two.png";
+            if(currentVal === 3) document.querySelector(".diceImg").src = "dice/dice-six-faces-three.png";
+            if(currentVal === 4) document.querySelector(".diceImg").src = "dice/dice-six-faces-four.png";
+            if(currentVal === 5) document.querySelector(".diceImg").src = "dice/dice-six-faces-five.png";
+            if(currentVal === 6) document.querySelector(".diceImg").src = "dice/dice-six-faces-six.png";
+        },
         currentValue: function(){
             return currentVal;
         },
@@ -22,6 +32,11 @@ var diceModule = ( function(){
             if(currentVal === 6) document.querySelector(".diceImg").src = "dice/dice-six-faces-six.png";
             console.log(currentVal);
             moveFig(currentVal);
+            let json_ob = {
+                value: currentVal,
+                type: "diceValue"
+            }
+            ws.send(JSON.stringify(json_ob));
         }
     }
 })();
@@ -40,6 +55,7 @@ function Player(name, figures) {
     this.incScore = function() { this.score++ };
     this.getScore = function() { return this.score};
     this.resetScore = function() { this.score = 0 };
+    this.getName = function() { return this.name};
 }
 
 function resetFigState(){
@@ -248,8 +264,8 @@ diceRef.addEventListener('click', function(){
 
 
 
-let p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
-let p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
+
+
 
 
 
@@ -258,9 +274,16 @@ let score2 = document.getElementById("score2");
 
 let p1Turn = true;
 
+let p1 = null;
+let p2 = null;
+let p1_flag = true;
 
 let ws = new WebSocket("ws://localhost:3000");
+p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
+p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
 
+let messages = require("./messages");
+console.log(messages);
 
 //ws for local connections
 
@@ -271,10 +294,30 @@ ws.onopen = function(event){
 ws.onerror = () => {
     console.log("failed");
 };
+
 ws.onmessage = (message) => {
-    console.log(message.data);
+    console.log(message);
+    let data = JSON.parse(message.data);
+    switch (data.type) {
+        case "diceValue":
+            diceModule.setValue(data.value);
+            break;
+    
+        default:
+            break;
+    }
+    if(message.data === "p1"){
+        
+        let p1_flag = true;
+    }
+    if(message.data === "p2"){
+        p1 = new Player("Test1", initFigures(figRef1, homePos, 1, 0));
+        p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
+        let p1_flag = false;
+    }
+
 }
-console.log("haha");
+
 
 // ws.onmessage = function (event) {
 //     var msg = JSON.parse(event.data);

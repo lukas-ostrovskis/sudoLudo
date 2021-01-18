@@ -44,6 +44,12 @@ class Game {
     gameStarted() {
         return this.gameState == 2;
     }
+    getPlayerOne(){
+        return this.playerOne;
+    }
+    getPlayerTwo(){
+        return this.playerTwo;
+    }
 
 
 

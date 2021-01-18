@@ -4,6 +4,7 @@ var http = require("http");
 const websocket = require("ws");
 let stats = require("./stats");
 let Game = require("./game");
+let messages = require("./public/javascripts/messages");
 
 var port = process.argv[2];
 var app = express();
@@ -51,7 +52,9 @@ wss.on("connection", function connection(ws){
 
     console.log(playerType);
 
-    connection.send(playerType === "one" ? "You are Green player" : "You are Blue player");
+    connection.send(playerType === "one" ? "p1" : "p2");
+
+
 
     //if current game already started then leave it as it is and assign current game a new Game
     if(currentGame.gameStarted()){
@@ -63,6 +66,26 @@ wss.on("connection", function connection(ws){
         let currentGameObject = websockets[connection.id];
         let isPlayerOne = currentGameObject.playerOne === connection ? true : false;
         // TODO a link between client and server.
+        let data = JSON.parse(message);
+        switch (data.type) {
+            case "diceValue":
+                if(isPlayerOne){
+                    currentGameObject.getPlayerTwo().send(JSON.stringify({type: "diceValue", value: data.value}));
+                    console.log(data.value);
+                }
+                if(!isPlayerOne){
+                    currentGameObject.getPlayerOne().send(JSON.stringify({type: "diceValue", value: data.value}));
+                    console.log(data.value);
+                }
+                break;
+        
+            case "CLICKED_FIG_REF":
+                //if it got a dice roll and no legal move then change turn to another player,
+                //if there are legal moves then wait for CLICKED FIG REF.
+            default:
+                console.log("type not defined yet");
+                break;
+        }
     });
 
 
