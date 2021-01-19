@@ -63,6 +63,16 @@
     data: "B"
     };
     exports.S_PLAYER_B = JSON.stringify(exports.O_PLAYER_B);
+
+    /*
+    * Client to server or server to client: score of player
+    */
+
+    exports.T_PLAYER_SCORE = "PLAYER-SCORE";
+    exports.O_PLAYER_SCORE = {
+        type: exports.T_PLAYER_SCORE,
+        data: null
+    }
 })(typeof exports === "undefined" ? (this.Messages = {}) : exports);
 
 

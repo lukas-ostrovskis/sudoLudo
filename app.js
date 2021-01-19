@@ -24,7 +24,8 @@ app.get("/", function(req, res){
     //res.sendFile("splash.html", {root: "./public"});
     res.render("splash", {
         gamesInit: stats.gamesInitialized,
-        gamesOngoing: stats.onGoingGames
+        gamesOngoing: stats.onGoingGames,
+        playersPlaying: stats.onGoingGames
     });
 });
 
@@ -94,6 +95,23 @@ wss.on("connection", function connection(ws){
                 break;
                 //if it got a dice roll and no legal move then change turn to another player,
                 //if there are legal moves then wait for CLICKED FIG REF.
+            case messages.T_PLAYER_SCORE:
+                if(isPlayerOne){
+                    if(msg.data === 4){
+                        currentGameObject.getPlayerTwo().send(message);
+                        currentGameObject.getPlayerOne().send(message);
+                    }
+                } else {
+                    if(msg.data === 4){
+                        currentGameObject.getPlayerOne().send(message);
+                        currentGameObject.getPlayerTwo().send(message);
+                    }
+                }
+
+            case "closing":
+                currentGameObject.getPlayerOne().send(message);
+                currentGameObject.getPlayerTwo().send(message);bec
+
             default:
                 console.log("type not defined yet");
                 break;
@@ -111,16 +129,22 @@ wss.on("connection", function connection(ws){
                 currentGameObject.setGameState(5);
                 stats.onGoingGames--;
             }
-            
-            if(currentGameObject.playerOne !== null){
-                currentGameObject.playerOne.close();
-                currentGameObject.playerOne === null;
+            try{
+                if(currentGameObject.playerOne !== null){
+                    currentGameObject.playerOne.close();
+                    currentGameObject.playerOne === null;
+                }
+            } catch(e){
+                console.log("A: " + e);
             }
-            if(currentGameObject.playerTwo !== null){
-                currentGameObject.playerTwo.close();
-                currentGameObject.playerTwo === null;
+            try{
+                if(currentGameObject.getPlayerTwo() !== null){
+                    currentGameObject.getPlayerTwo().close();
+                    currentGameObject.playerTwo === null;
+                }
+            } catch(e){
+                console.log("B: " + e);
             }
-            
         }
     });
 

@@ -159,6 +159,19 @@ function Figure(homePos, startPos, ref, id) {
                 this.ref.style.display = "none";
                 p2.incScore();
                 score2.innerHTML = "Player 2 score: " + p2.getScore() + "/4";
+                let scoreObj = Messages.O_PLAYER_SCORE;
+                scoreObj.data = p2.getScore();
+                if(p2.getScore() === 4){
+                    document.getElementById("dice").style.pointerEvents = "none";
+                    let info = document.querySelector(".info");
+                    if(gs.getPlayerType === "B"){
+                        info.innerHTML = "You Won!";
+                    } else {
+                        info.innerHTML = "You Lost!"
+                    }
+                    
+                }
+                ws.send(JSON.stringify(scoreObj));
 
             } 
         } 
@@ -170,6 +183,20 @@ function Figure(homePos, startPos, ref, id) {
                 this.ref.style.display = "none";
                 p1.incScore();
                 score1.innerHTML = "Player 1 score: " + p1.getScore() + "/4";
+                let scoreObj = Messages.O_PLAYER_SCORE;
+                scoreObj.data = p1.getScore();
+                ws.send(JSON.stringify(scoreObj));
+                if(p2.getScore() === 4){
+                    document.getElementById("dice").style.pointerEvents = "none";
+                    let info = document.querySelector(".info");
+                    if(gs.getPlayerType === "A"){
+                        info.innerHTML = "You Won!";
+                    } else {
+                        info.innerHTML = "You Lost!"
+                    }
+                    diceRef.point
+                    
+                }
             }
         }
     }
@@ -274,7 +301,7 @@ function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
 
 /**
  * Determines the move availability of each player by their turn.
- * @param {} currentVal - value by which the figure should be moved
+ * @param {integer} currentVal - value by which the figure should be moved
  */
 function moveFig(currentVal) {
     console.log(currentVal);
@@ -332,6 +359,7 @@ const diceRef = document.querySelector(".dice");
 //diceRef.addEventListener('click', diceModule.rollDice);
 diceRef.addEventListener('click', function(){
     document.getElementById("dice").style.pointerEvents = "none";
+    document.getElementById("dice").style.animation = "none";
     diceModule.rollDice();
 });
 
@@ -361,6 +389,7 @@ function updateGameState(){
     if(gs.getTurn() === true){
 
         document.getElementById("dice").style.pointerEvents = "auto";
+        document.getElementById("dice").style.animation = "blink 1s infinite";
         console.log("turning on")
         for(let i = 0; i < 4; i++) {
             if(gs.getPlayerType() === "A"){
@@ -382,7 +411,12 @@ function updateGameState(){
 }
 
 
-
+let mainMenu = document.querySelector('.mainMenu');
+mainMenu.addEventListener("click", function(){
+    console.log("go to main menu");
+    ws.send(JSON.stringify({type: "closing"}));
+    ws.close();
+});
 
 
 
@@ -414,13 +448,17 @@ ws.onerror = () => {
     console.log("failed");
 };
 
+ws.onclose = function(event){
+    
+}
+
 ws.onmessage = (message) => {
     if(message.data === "gameStarted"){
         timeFunction();
     }
     console.log(message);
     let msg = JSON.parse(message.data);
-    switch (msg.type) {
+    switch (msg.type)  {
         case Messages.T_PLAYER_TYPE:
             // if(message.data == "A") {
             //     console.log(message.data);
@@ -457,9 +495,30 @@ ws.onmessage = (message) => {
             console.log(fig);
             break;
 
-        case Messages.T_MOVE_AVAILABILITY_A:
+        case Messages.T_PLAYER_SCORE:
+            let playerType = gs.getPlayerType();
+            console.log(msg.data);
+            if(playerType === "A"){
+                if(p1.getScore() === 4){
+                    // you won
+                }
+                if(p2.getScore() === 4){
+                    // player 2 won
+                }
+            }
+            if(playerType === "B"){
+                if(p1.getScore() === 4){
+                    // p1 won
+                }
+                if(p2.getScore() === 4){
+                    // you won
+                }
+            }
             break;
-        case Messages.T_MOVE_AVAILABILITY_B:
+        case "closing":
+            let info = document.querySelector(".info");
+            info.innerHTML = "Your opponent left";
+            info.style.display = "inline";
             break;
     
         default:
