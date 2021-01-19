@@ -196,7 +196,7 @@ body {
 .player {
     position: absolute;
     left: 40%;
-    top: 2%;
+    top: 0%;
   
     font-family: 'Ubuntu', sans-serif;
     font-size: 1.3vmax;

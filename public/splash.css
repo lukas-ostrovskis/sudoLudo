@@ -11,18 +11,25 @@ body {
   100% { opacity: 100%; }
 }
 
-.rectangle {
+.rules {
     position: absolute;
-    top: 30%;
+    top: 10%;
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
 
-    height: 100px;
-    width: 250px;
-    background-color: #555;
+    height: 7%;
+    width: 30%;
+    background-color: #002b36;
     z-index:-1;
     border-radius: 7px;
+    border: 1px solid #74c234;
+
+    text-align: center;
+    vertical-align: middle;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 2vmax;
+
   }
 
   .terminal {
@@ -156,15 +163,13 @@ body {
 
   .hidden {
     display: none;
-    top: 50%;
-    height: 550px;
-    width: 550px;
+    top: 10%;
     z-index:4;
   }
 
   .hidden-btn {
     position: absolute;
-    top: 80%;
+    top: 17%;
     left: 50%;
     margin-right: -50%;
     transform: translate(-50%, -50%);
@@ -173,14 +178,6 @@ body {
     height: 20px;
     width: 100px;
     z-index:4;
-  }
-
-  .statistics {
-    position: absolute;
-    top: 87%;
-    left: 19%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
   }
 
   .grid-container {
