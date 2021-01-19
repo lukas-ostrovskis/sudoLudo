@@ -17,6 +17,12 @@
         moveAvailability: null
     };
 
+    exports.T_FIG_RETURN_BASE = "FIG-RETURN-BASE";
+    exports.O_FIG_RETURN_BASE = {
+        type: exports.T_FIG_RETURN_BASE,
+        data: null,
+    };
+
     exports.T_MOVE_AVAILABILITY_A = "MOVE-AVAIL-A";
     exports.O_MOVE_AVAILABILITY_A = {
         type: exports.T_MOVE_AVAILABILITY_A,
@@ -43,6 +49,12 @@
     };
     exports.S_GAME_ABORTED = JSON.stringify(exports.O_GAME_ABORTED); // kam sito reik?
 
+    // exports.T_GAME_CLOSING = "GAME-CLOSING";
+    // exports.O_GAME_CLOSING = {
+    //     type: T_GAME_CLOSING,
+    // };
+
+    
 
     // set as player A/B
     /*

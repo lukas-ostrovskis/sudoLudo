@@ -50,7 +50,7 @@ var diceModule = ( function(){
                 console.log("calling for b player");
                 moveAvailability(p2, currentVal, 51, 54, 42);
                 for(let i = 0; i < 4; i++){
-                    if(p1.figures[i].canMove){
+                    if(p2.figures[i].canMove){
                         flag = true;
                     }
                 }
@@ -112,9 +112,17 @@ function checkCollisions(figure) {
     for(let i = 0; i < 4; i++) {
         if(p1.figures[i] != figure && p1.figures[i].startPos != figure.startPos && p1.figures[i].getCurrPos() == figure.getCurrPos()) {
             p1.figures[i].setCurrPos(p1.figures[i].homePos);
+            let outgoingMsg = Messages.O_FIG_RETURN_BASE; // If a figure that can be moved was clicked - send figure to the server
+            // also send turn change.
+            outgoingMsg.data = p1.figures[i];
+            ws.send(JSON.stringify(outgoingMsg));
         }
         if(p2.figures[i] != figure && p2.figures[i].startPos != figure.startPos && p2.figures[i].getCurrPos() == figure.getCurrPos()) {
             p2.figures[i].setCurrPos(p2.figures[i].homePos);
+            let outgoingMsg = Messages.O_FIG_RETURN_BASE; // If a figure that can be moved was clicked - send figure to the server
+            // also send turn change.
+            outgoingMsg.data = p2.figures[i];
+            ws.send(JSON.stringify(outgoingMsg));
         }
     }
 }
@@ -136,6 +144,7 @@ function Figure(homePos, startPos, ref, id) {
     this.currPos = homePos;
 
     this.getId = function() { return this.id };
+    this.getHomePos = function() {return this.homePos};
     this.leaveBase = function() {
         // @ts-ignore
         gridContainer.querySelector('.div' + startPos).appendChild(this.ref);
@@ -162,6 +171,7 @@ function Figure(homePos, startPos, ref, id) {
                 let scoreObj = Messages.O_PLAYER_SCORE;
                 scoreObj.data = p2.getScore();
                 if(p2.getScore() === 4){
+                    gameWonBool = true;
                     document.getElementById("dice").style.pointerEvents = "none";
                     let info = document.querySelector(".info");
                     if(gs.getPlayerType === "B"){
@@ -169,7 +179,8 @@ function Figure(homePos, startPos, ref, id) {
                     } else {
                         info.innerHTML = "You Lost!"
                     }
-                    
+                    info.style.display = "auto";
+                    ws.close(3050);
                 }
                 ws.send(JSON.stringify(scoreObj));
 
@@ -186,7 +197,8 @@ function Figure(homePos, startPos, ref, id) {
                 let scoreObj = Messages.O_PLAYER_SCORE;
                 scoreObj.data = p1.getScore();
                 ws.send(JSON.stringify(scoreObj));
-                if(p2.getScore() === 4){
+                if(p1.getScore() === 4){
+                    gameWonBool = true;
                     document.getElementById("dice").style.pointerEvents = "none";
                     let info = document.querySelector(".info");
                     if(gs.getPlayerType === "A"){
@@ -194,8 +206,8 @@ function Figure(homePos, startPos, ref, id) {
                     } else {
                         info.innerHTML = "You Lost!"
                     }
-                    diceRef.point
-                    
+                    info.style.display = "auto";
+                    ws.close(3050);
                 }
             }
         }
@@ -347,6 +359,8 @@ function timeFunction(){
 }
 
 
+let gameStartedBool = false;
+let gameWonBool = false;
 const game = document.querySelector('.game');
 const gridContainer = game.querySelector('.grid-container');
 const grid = gridContainer.querySelectorAll('div');
@@ -355,12 +369,15 @@ const figRef2 = gridContainer.querySelectorAll('.dot2');
 
 let homePos = homePositions(gridContainer, figRef1, figRef2);
 
+let info = document.querySelector(".info");
 const diceRef = document.querySelector(".dice");
 //diceRef.addEventListener('click', diceModule.rollDice);
 diceRef.addEventListener('click', function(){
     document.getElementById("dice").style.pointerEvents = "none";
-    document.getElementById("dice").style.animation = "none";
     diceModule.rollDice();
+    if(diceModule.currentValue() != 6){
+        document.getElementById("dice").style.animation = "none";
+    }
 });
 
 
@@ -389,8 +406,10 @@ function updateGameState(){
     if(gs.getTurn() === true){
 
         document.getElementById("dice").style.pointerEvents = "auto";
-        document.getElementById("dice").style.animation = "blink 1s infinite";
-        console.log("turning on")
+        if(gameStartedBool){
+            document.getElementById("dice").style.animation = "blink 1s infinite";
+        }
+        console.log("turning on");
         for(let i = 0; i < 4; i++) {
             if(gs.getPlayerType() === "A"){
                 p1.figures[i].ref.style.pointerEvents = "auto";
@@ -437,6 +456,11 @@ p2 = new Player("Test2", initFigures(figRef2, homePos, 19, 4));
 
 let gs = new GameState();
 
+window.onunload = function(){
+    ws.send(JSON.stringify({type: "closing"}));
+    ws.close(3100);
+}
+
 
 //ws for local connections
 
@@ -455,6 +479,15 @@ ws.onclose = function(event){
 ws.onmessage = (message) => {
     if(message.data === "gameStarted"){
         timeFunction();
+        gameStartedBool = true;
+        updateGameState();
+        let info = document.querySelector(".info");
+        info.innerHTML = "";
+        info.style.display = "none";
+        if(gs.getPlayerType() === "A"){
+            diceRef.style.pointerEvents = "auto";
+        }
+        
     }
     console.log(message);
     let msg = JSON.parse(message.data);
@@ -468,6 +501,11 @@ ws.onmessage = (message) => {
             if(msg.data === "A"){
                 gs.setTurn(true);
                 updateGameState();
+                let info = document.querySelector(".info");
+                info.innerHTML = "Wait for your opponent";
+                info.style.display = "inline";
+                let player_ref = document.querySelector(".player");
+                player_ref.innerHTML = "You are Green player";
             }
             else {
                 console.log(msg.data);
@@ -475,10 +513,13 @@ ws.onmessage = (message) => {
             if(msg.data === "B"){
                 gs.setTurn(false);
                 updateGameState();
+                let player_ref = document.querySelector(".player");
+                player_ref.innerHTML = "You are Blue player";
             }
+            break;
         case Messages.T_DICE_VALUE:
             diceModule.setValue(msg.data);
-            if(msg.moveAvailability === false){
+            if(msg.moveAvailability === false && msg.data != 6){
                 gs.setTurn(true); // if another player had no legal moves after dice roll then another player gets a turn to roll a dice
                 updateGameState();
             }
@@ -517,10 +558,20 @@ ws.onmessage = (message) => {
             break;
         case "closing":
             let info = document.querySelector(".info");
-            info.innerHTML = "Your opponent left";
-            info.style.display = "inline";
+            if(!gameWonBool){
+                info.innerHTML = "Your opponent left";
+                info.style.display = "inline";
+            }
+            
+            diceRef.style.pointerEvents = "none";
+            diceRef.style.animation = "none";
             break;
-    
+        case Messages.T_FIG_RETURN_BASE:
+            let fig_xy = findFig(msg.data.id); // Find the received figure by its id 
+            fig_xy.setCurrPos(fig_xy.getHomePos());
+            console.log("haiahasd");
+            
+            break;
         default:
             break;
     }

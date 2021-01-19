@@ -11,9 +11,6 @@ var app = express();
 let server = http.createServer(app);
 const wss = new websocket.Server({server});
 
-//console.log(wss);
-// console.log(app);
-// console.log(server);
 var websockets = {};
 
 app.set("view engine", "ejs");
@@ -25,7 +22,6 @@ app.get("/", function(req, res){
     res.render("splash", {
         gamesInit: stats.gamesInitialized,
         gamesOngoing: stats.onGoingGames,
-        playersPlaying: stats.onGoingGames
     });
 });
 
@@ -37,6 +33,9 @@ console.log(stats.gamesInitialized);
 
 let currentGame = new Game(stats.gamesInitialized++);
 let connectionID = 0;
+
+
+
 
 
 
@@ -72,25 +71,34 @@ wss.on("connection", function connection(ws){
         let isPlayerOne = currentGameObject.playerOne === connection ? true : false;
         // TODO a link between client and server.
         console.log(isPlayerOne);
+        console.log(message);
         let msg = JSON.parse(message);
         switch (msg.type) {
             case messages.T_DICE_VALUE:
                 if(isPlayerOne){
-                    currentGameObject.getPlayerTwo().send(message);
+                    if(currentGameObject.getPlayerTwo() !== null){
+                        currentGameObject.getPlayerTwo().send(message);
+                    }
                     console.log(msg.data);
                 }
                 else{
-                    currentGameObject.getPlayerOne().send(message);
+                    if(currentGameObject.getPlayerOne() !== null){
+                        currentGameObject.getPlayerOne().send(message);
+                    }
                     console.log(msg.data);
                 }
                 break;
         
             case messages.T_CLICKED_FIG_REF:
                 if(isPlayerOne){
-                    currentGameObject.getPlayerTwo().send(message);
+                    if(currentGameObject.getPlayerTwo() !== null){
+                        currentGameObject.getPlayerTwo().send(message);
+                    }
                 }
                 else {
-                    currentGameObject.getPlayerOne().send(message);
+                    if(currentGameObject.getPlayerOne() !== null){
+                        currentGameObject.getPlayerOne().send(message);
+                    }
                 }
                 break;
                 //if it got a dice roll and no legal move then change turn to another player,
@@ -98,22 +106,50 @@ wss.on("connection", function connection(ws){
             case messages.T_PLAYER_SCORE:
                 if(isPlayerOne){
                     if(msg.data === 4){
-                        currentGameObject.getPlayerTwo().send(message);
-                        currentGameObject.getPlayerOne().send(message);
+                        if(currentGameObject.getPlayerOne() !== null){
+                            currentGameObject.getPlayerOne().send(message);
+                        }
+                        if(currentGameObject.getPlayerTwo() !== null){
+                            currentGameObject.getPlayerTwo().send(message);
+                        }
                     }
                 } else {
                     if(msg.data === 4){
-                        currentGameObject.getPlayerOne().send(message);
+                        if(currentGameObject.getPlayerOne() !== null){
+                            currentGameObject.getPlayerOne().send(message);
+                        }
+                        if(currentGameObject.getPlayerTwo() !== null){
+                            currentGameObject.getPlayerTwo().send(message);
+                        }
+                    }
+                }
+                break;
+            case "closing":
+                if(currentGameObject.getPlayerOne() !== null){
+                    currentGameObject.getPlayerOne().send(message);
+                }
+                if(currentGameObject.getPlayerTwo() !== null){
+                    currentGameObject.getPlayerTwo().send(message);
+                }
+                break;
+
+            case messages.T_FIG_RETURN_BASE:
+                if(isPlayerOne){
+                    if(currentGameObject.getPlayerTwo() !== null){
                         currentGameObject.getPlayerTwo().send(message);
                     }
                 }
-
-            case "closing":
-                currentGameObject.getPlayerOne().send(message);
-                currentGameObject.getPlayerTwo().send(message);bec
+                else {
+                    if(currentGameObject.getPlayerOne() !== null){
+                        currentGameObject.getPlayerOne().send(message);
+                    }
+                }
+                break;
+                
 
             default:
                 console.log("type not defined yet");
+                console.log(msg.type);
                 break;
         }
     });
@@ -121,6 +157,38 @@ wss.on("connection", function connection(ws){
 
     
     connection.on("close", function(code){
+        console.log(code);
+        // the game over close
+        if(code === 3100 || code === "3100"){
+            console.log("shutdownscreen");
+        }
+        if(code == 3050 || code === "3050"){
+            console.log("game over");
+            let currentGameObject = websockets[connection.id];
+            
+
+            if(currentGameObject.getGameState() < 5 && currentGameObject.getGameState() > 1){
+                currentGameObject.setGameState(5);
+                stats.onGoingGames--;
+            }
+            try{
+                if(currentGameObject.playerOne !== null){
+                    currentGameObject.playerOne.close();
+                    currentGameObject.playerOne === null;
+                }
+            } catch(e){
+                console.log("A: " + e);
+            }
+            try{
+                if(currentGameObject.getPlayerTwo() !== null){
+                    currentGameObject.getPlayerTwo().close();
+                    currentGameObject.playerTwo === null;
+                }
+            } catch(e){
+                console.log("B: " + e);
+            }
+        }
+
         if(code == "1001"){
             let currentGameObject = websockets[connection.id];
             

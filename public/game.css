@@ -66,6 +66,10 @@ body {
       height: 13vmin;
       border-radius: 10%
   }
+
+  .dice:active {
+    background-color: salmon;
+}
   
   .timerBox {
       position: absolute;
@@ -189,10 +193,26 @@ body {
   width: 17vmax;
   height: 7vmax;
 }
+.player {
+    position: absolute;
+    left: 40%;
+    top: 2%;
+  
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 1.3vmax;
+    word-wrap: break-word;
+    color: salmon;
+
+  
+    width: 17vmax;
+    height: 7vmax;
+  }
 
   div.grid-container > div {
     border: 1px solid white;
   }
+
+  
 
   .div1 { grid-area: 15 / 2 / 16 / 3; background-color: #024758;}
   .div2 { grid-area: 14 / 2 / 15 / 3; }
