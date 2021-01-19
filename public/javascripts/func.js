@@ -167,7 +167,7 @@ function Figure(homePos, startPos, ref, id) {
             if(this.currPos == 42) {
                 this.ref.style.display = "none";
                 p2.incScore();
-                score2.innerHTML = "Player 2 score: " + p2.getScore() + "/4";
+                score2.innerHTML = '<span style="color: #74c234">Player2@covm</span><span style="color: white">:</span><span style="color: #6692be">~/sudoLudo</span><br>' + p2.getScore() + '/4';
                 let scoreObj = Messages.O_PLAYER_SCORE;
                 scoreObj.data = p2.getScore();
                 if(p2.getScore() === 4){
@@ -193,7 +193,7 @@ function Figure(homePos, startPos, ref, id) {
             if(this.currPos == 47) {
                 this.ref.style.display = "none";
                 p1.incScore();
-                score1.innerHTML = "Player 1 score: " + p1.getScore() + "/4";
+                score1.innerHTML = '<span style="color: #74c234">Player1@covm</span><span style="color: white">:</span><span style="color: #6692be">~/sudoLudo</span><br>' + p1.getScore() + '/4';
                 let scoreObj = Messages.O_PLAYER_SCORE;
                 scoreObj.data = p1.getScore();
                 ws.send(JSON.stringify(scoreObj));
