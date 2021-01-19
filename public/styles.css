@@ -1,132 +1,93 @@
 .game {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
 
-    width: 60vw;
-    height: 80vh;
-    min-width: 300px;
-    min-height: 300px;
-    max-width: calc(100vw - 2em);
-    max-height: calc(100vh - 2em);
-    /* border: 1px solid red; */
-    background-color: #002b36;
-    border-radius: 7px;
-  }
-
-  .rectangle {
-    position: absolute;
-    top: 30%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-
-    height: 100px;
-    width: 250px;
-    background-color: #555;
-    z-index:-1;
-    border-radius: 7px;
-  }
-
-  .btn {
-    border: none;
-    background-color: salmon;
-    padding: 14px 28px;
-    font-size: 16px;
-    cursor: pointer;
-    display: inline-block;
-
-    z-index:-1;
-
-    width: 200px;
-    height: 40px;
-    position: absolute;
-    top: 58%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    border-radius: 7px;
-  }
-
-  .btn1 {
-    border: none;
-    background-color: salmon;
-    padding: 14px 28px;
-    font-size: 16px;
-    cursor: pointer;
-    display: inline-block;
-
-    z-index:-1;
-
-    width: 200px;
-    height: 40px;
-    position: absolute;
-    top: 67%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    border-radius: 7px;
-  }
-  .hidden {
-    display: none;
-    top: 50%;
-    height: 550px;
-    width: 550px;
-    z-index:4;
-  }
-  .hidden-btn {
-    position: absolute;
-    top: 80%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-
-    display: none;
-    height: 20px;
-    width: 100px;
-    z-index:4;
-  }
-
-  .statistics {
-    position: absolute;
-    top: 87%;
-    left: 19%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .mainMenu{
-    position: absolute;
-    top: 15%;
-    left: 75%;
-    width: 10vmax;
-    height: 5vmax;
-    font-family: 'Ubuntu', sans-serif;
-    font-size: 1.3vmax;
-    word-wrap: break-word;
+  width: 60vw;
+  height: 80vh;
+  min-width: 300px;
+  min-height: 300px;
+  max-width: calc(100vw - 2em);
+  max-height: calc(100vh - 2em);
+  /* border: 1px solid red; */
+  background-color: #002b36;
+  border-radius: 7px;
 }
-.restart {
-  color: black;
+
+.rectangle {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+
+  height: 100px;
+  width: 250px;
+  background-color: #555;
+  z-index:-1;
+  border-radius: 7px;
+}
+
+.hidden {
+  display: none;
+  top: 50%;
+  height: 550px;
+  width: 550px;
+  z-index:4;
+}
+.hidden-btn {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+
+  display: none;
+  height: 20px;
+  width: 100px;
+  z-index:4;
+}
+
+.statistics {
+  position: absolute;
+  top: 87%;
+  left: 19%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+}
+
+.mainMenu{
+  position: absolute;
+  top: 15%;
+  left: 75%;
+  width: 10vmax;
+  height: 5vmax;
   font-family: 'Ubuntu', sans-serif;
   font-size: 1.3vmax;
   word-wrap: break-word;
+}
+.restart {
+color: black;
+font-family: 'Ubuntu', sans-serif;
+font-size: 1.3vmax;
+word-wrap: break-word;
 }
 
 
 .info {
-  position: absolute;
-  left: 1%;
-  top: 20%;
+position: absolute;
+left: 1%;
+top: 20%;
 
-  font-family: 'Ubuntu', sans-serif;
-  font-size: 1.3vmax;
-  word-wrap: break-word;
-  color: salmon;
-  display: none;
+font-family: 'Ubuntu', sans-serif;
+font-size: 1.3vmax;
+word-wrap: break-word;
+color: salmon;
+display: none;
 
-  width: 17vmax;
-  height: 7vmax;
+width: 17vmax;
+height: 7vmax;
 }
 
