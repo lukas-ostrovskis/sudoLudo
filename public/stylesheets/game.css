@@ -93,6 +93,10 @@ body {
       width: 17vmax;
       height: 7vmax;
   }
+  
+  div.score > p::before {
+    content: "▷";
+  }
 
   #score1 {
       font-family: 'Ubuntu', sans-serif;
