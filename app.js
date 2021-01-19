@@ -54,9 +54,6 @@ wss.on("connection", function connection(ws){
 
     connection.send(playerType === "one" ? messages.S_PLAYER_A : messages.S_PLAYER_B);
 
-    // if(playerType === "two"){
-        
-    // }
 
 
 
@@ -115,11 +112,11 @@ wss.on("connection", function connection(ws){
                 stats.onGoingGames--;
             }
             
-            if(currentGameObject.playerOne != null){
+            if(currentGameObject.playerOne !== null){
                 currentGameObject.playerOne.close();
                 currentGameObject.playerOne === null;
             }
-            if(currentGameObject.playerTwo != null){
+            if(currentGameObject.playerTwo !== null){
                 currentGameObject.playerTwo.close();
                 currentGameObject.playerTwo === null;
             }

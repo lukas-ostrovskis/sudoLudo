@@ -13,8 +13,21 @@
     exports.T_CLICKED_FIG_REF = "CLICKED_FIG_REF";
     exports.O_CLICKED_FIG_REF = {
         type: exports.T_CLICKED_FIG_REF,
-        data: null
+        data: null,
+        moveAvailability: null
     };
+
+    exports.T_MOVE_AVAILABILITY_A = "MOVE-AVAIL-A";
+    exports.O_MOVE_AVAILABILITY_A = {
+        type: exports.T_MOVE_AVAILABILITY_A,
+        data:null
+    }
+
+    exports.T_MOVE_AVAILABILITY_B = "MOVE-AVAIL-B";
+    exports.O_MOVE_AVAILABILITY_B = {
+        type: exports.T_MOVE_AVAILABILITY_B,
+        data: null
+    }
 
     //game won by
     exports.T_GAME_WON_BY = "GAME-WON-BY";

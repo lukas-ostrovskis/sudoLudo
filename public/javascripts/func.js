@@ -32,8 +32,38 @@ var diceModule = ( function(){
             if(currentVal === 6) document.querySelector(".diceImg").src = "dice/dice-six-faces-six.png";
             console.log(currentVal);
             moveFig(currentVal);
+            
+            console.log(gs.getPlayerType() + " this is player type");
+            console.log()
+            let flag = false;
+            if(gs.getPlayerType() === "A"){
+                console.log("calling for a player");
+                moveAvailability(p1, currentVal, 47, 50, 47);
+                for(let i = 0; i < 4; i++){
+                    if(p1.figures[i].canMove){
+                        flag = true;
+                    }
+                }
+            }
+
+            if(gs.getPlayerType() === "B"){
+                console.log("calling for b player");
+                moveAvailability(p2, currentVal, 51, 54, 42);
+                for(let i = 0; i < 4; i++){
+                    if(p1.figures[i].canMove){
+                        flag = true;
+                    }
+                }
+            }
+            
+            
             let outgoingMsg = Messages.DICE_VALUE;
             outgoingMsg.data = currentVal;
+            outgoingMsg.moveAvailability = flag;
+            if(flag == false){
+                gs.setTurn(false);
+                updateGameState();
+            }
             ws.send(JSON.stringify(outgoingMsg));
         }
     }
@@ -161,7 +191,12 @@ function Figure(homePos, startPos, ref, id) {
                 checkCollisions(that);
                 resetFigState();
                 let outgoingMsg = Messages.O_CLICKED_FIG_REF; // If a figure that can be moved was clicked - send figure to the server
+                // also send turn change.
                 outgoingMsg.data = that;
+                if(diceModule.currentValue() != 6){
+                    gs.setTurn(false); // sets turn to false after player clicked on the fig.
+                    updateGameState(); // Updates dice according to player's turn
+                }
                 ws.send(JSON.stringify(outgoingMsg));
             }
         });
@@ -230,6 +265,8 @@ function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
     // adds the animation on the figures that can move
     for(let i = 0; i < 4; i++) {
         if(p.figures[i].canMove) {
+            console.log(p.getName());
+            console.log(moveAvailability.caller);
             p.figures[i].ref.style.animation = "blink 1s infinite";
         }
     }
@@ -241,6 +278,8 @@ function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
  */
 function moveFig(currentVal) {
     console.log(currentVal);
+    console.log(moveFig.caller);
+    console.log(p1Turn);
     if(p1Turn) {
         moveAvailability(p1, currentVal, 47, 50, 47);
         console.log("PLAYER 1");
@@ -297,6 +336,52 @@ diceRef.addEventListener('click', function(){
 });
 
 
+// TODO turn off pointerEvents on the figures of opponent. Done
+function updateGameState(){
+    console.log("haha");
+    console.log(gs.getTurn());
+    if(gs.getTurn() === false){
+        document.getElementById("dice").style.pointerEvents = "none";
+        console.log("turning off");
+        for(let i = 0; i < 4; i++) {
+            if(gs.getPlayerType() === "A"){
+                p2.figures[i].ref.style.pointerEvents = "none";
+            } else {
+                p1.figures[i].ref.style.pointerEvents = "none";
+            }
+                 
+        }
+        if(gs.getPlayerType() === "A"){
+            p1Turn = false;
+        } else {
+            p1Turn = true;
+        }
+        
+    }
+    if(gs.getTurn() === true){
+
+        document.getElementById("dice").style.pointerEvents = "auto";
+        console.log("turning on")
+        for(let i = 0; i < 4; i++) {
+            if(gs.getPlayerType() === "A"){
+                p1.figures[i].ref.style.pointerEvents = "auto";
+                p2.figures[i].ref.style.pointerEvents = "none";
+            } else {
+                p1.figures[i].ref.style.pointerEvents = "none";
+                p2.figures[i].ref.style.pointerEvents = "auto";
+            }
+                 
+        }
+        if(gs.getPlayerType() === "A"){
+            p1Turn = true;
+        } else {
+            p1Turn = false;
+        }
+
+    }
+}
+
+
 
 
 
@@ -344,18 +429,37 @@ ws.onmessage = (message) => {
             console.log(gs.getPlayerType());
             if(msg.data === "A"){
                 gs.setTurn(true);
+                updateGameState();
             }
             else {
                 console.log(msg.data);
             }
+            if(msg.data === "B"){
+                gs.setTurn(false);
+                updateGameState();
+            }
         case Messages.T_DICE_VALUE:
             diceModule.setValue(msg.data);
+            if(msg.moveAvailability === false){
+                gs.setTurn(true); // if another player had no legal moves after dice roll then another player gets a turn to roll a dice
+                updateGameState();
+            }
             break;
         case Messages.T_CLICKED_FIG_REF:
             let fig = findFig(msg.data.id); // Find the received figure by its id 
             fig.receivedMove(); // Workaround, canMove disabled when move is received from the server so we need to manually enable it for this fig
             fig.calculatePos(); // Update position of the received figure
+            if(diceModule.currentValue() != 6){
+                gs.setTurn(true); // if another player clicked figure set its turn to true
+                updateGameState(); // update dice
+            }
+            
             console.log(fig);
+            break;
+
+        case Messages.T_MOVE_AVAILABILITY_A:
+            break;
+        case Messages.T_MOVE_AVAILABILITY_B:
             break;
     
         default:
