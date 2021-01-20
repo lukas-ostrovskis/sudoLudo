@@ -9,7 +9,6 @@ var diceModule = ( function(){
             return rolled;
         },
         setValue: function(value){
-            console.log("value " + value);
             currentVal = value;
             if(currentVal === 1) document.querySelector(".diceImg").src = "dice/dice-six-faces-one.png";
             if(currentVal === 2) document.querySelector(".diceImg").src = "dice/dice-six-faces-two.png";
@@ -30,14 +29,10 @@ var diceModule = ( function(){
             if(currentVal === 4) document.querySelector(".diceImg").src = "dice/dice-six-faces-four.png";
             if(currentVal === 5) document.querySelector(".diceImg").src = "dice/dice-six-faces-five.png";
             if(currentVal === 6) document.querySelector(".diceImg").src = "dice/dice-six-faces-six.png";
-            console.log(currentVal);
             moveFig(currentVal);
             
-            console.log(gs.getPlayerType() + " this is player type");
-            console.log()
             let flag = false;
             if(gs.getPlayerType() === "A"){
-                console.log("calling for a player");
                 moveAvailability(p1, currentVal, 47, 50, 47);
                 for(let i = 0; i < 4; i++){
                     if(p1.figures[i].canMove){
@@ -47,7 +42,6 @@ var diceModule = ( function(){
             }
 
             if(gs.getPlayerType() === "B"){
-                console.log("calling for b player");
                 moveAvailability(p2, currentVal, 51, 54, 42);
                 for(let i = 0; i < 4; i++){
                     if(p2.figures[i].canMove){
@@ -99,7 +93,6 @@ function Player(name, figures) {
 }
 
 function resetFigState(){
-    console.log("resetting...")
     for(let i = 0; i < 4; i++) {
         p1.figures[i].canMove = false;
         p1.figures[i].ref.style.animation = "none";
@@ -224,8 +217,6 @@ function Figure(homePos, startPos, ref, id) {
                 document.getElementById("dice").style.pointerEvents = "auto";
             }
             if(that.canMove){
-                console.log(that.currPos);
-                console.log(diceModule.currentValue());
                 that.calculatePos(); // moved the logic from this event listener to calculatePos
                 checkCollisions(that);
                 resetFigState();
@@ -304,8 +295,6 @@ function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
     // adds the animation on the figures that can move
     for(let i = 0; i < 4; i++) {
         if(p.figures[i].canMove) {
-            console.log(p.getName());
-            console.log(moveAvailability.caller);
             p.figures[i].ref.style.animation = "blink 1s infinite";
         }
     }
@@ -316,17 +305,13 @@ function moveAvailability(p, currentVal, baseStart, baseEnd, gameEnd) {
  * @param {integer} currentVal - value by which the figure should be moved
  */
 function moveFig(currentVal) {
-    console.log(currentVal);
-    console.log(moveFig.caller);
-    console.log(p1Turn);
+
     if(p1Turn) {
         moveAvailability(p1, currentVal, 47, 50, 47);
-        console.log("PLAYER 1");
         
     }
     else {
         moveAvailability(p2, currentVal, 51, 54, 42);
-        console.log("PLAYER 2");
     }
     
     if(currentVal != 6) p1Turn = !p1Turn;
@@ -353,8 +338,6 @@ function timeFunction(){
     setInterval(function(){
         seconds++;
         timer.innerHTML = '<span style="color: #74c234">root@covm</span><span style="color: white">:</span><span style="color: #6692be">~/sudoLudo</span>\ngametime: ' + Math.floor(seconds / 3600)%24 + "." + Math.floor(seconds / 60)%60 + "." + seconds%60;
-        // console.log(seconds);
-        // console.log(Math.floor(seconds / 60));
     }, 1000);
 }
 
@@ -374,17 +357,21 @@ const diceRef = document.querySelector(".dice");
 //diceRef.addEventListener('click', diceModule.rollDice);
 diceRef.addEventListener('click', function(){
     document.getElementById("dice").style.pointerEvents = "none";
+    playDiceSound();
     diceModule.rollDice();
     if(diceModule.currentValue() != 6){
         document.getElementById("dice").style.animation = "none";
     }
 });
 
+function playDiceSound(){
+    var audio = new Audio("../sounds/dice-roll.mp3");
+    audio.play();
+} 
+
 
 // TODO turn off pointerEvents on the figures of opponent. Done
 function updateGameState(){
-    console.log("haha");
-    console.log(gs.getTurn());
     if(gs.getTurn() === false){
         document.getElementById("dice").style.pointerEvents = "none";
         console.log("turning off");
@@ -409,7 +396,6 @@ function updateGameState(){
         if(gameStartedBool){
             document.getElementById("dice").style.animation = "blink 1s infinite";
         }
-        console.log("turning on");
         for(let i = 0; i < 4; i++) {
             if(gs.getPlayerType() === "A"){
                 p1.figures[i].ref.style.pointerEvents = "auto";
@@ -432,7 +418,6 @@ function updateGameState(){
 
 let mainMenu = document.querySelector('.mainMenu');
 mainMenu.addEventListener("click", function(){
-    console.log("go to main menu");
     ws.send(JSON.stringify({type: "closing"}));
     ws.close();
 });
@@ -489,7 +474,6 @@ ws.onmessage = (message) => {
         }
         
     }
-    console.log(message);
     let msg = JSON.parse(message.data);
     switch (msg.type)  {
         case Messages.T_PLAYER_TYPE:
@@ -533,12 +517,10 @@ ws.onmessage = (message) => {
                 updateGameState(); // update dice
             }
             
-            console.log(fig);
             break;
 
         case Messages.T_PLAYER_SCORE:
             let playerType = gs.getPlayerType();
-            console.log(msg.data);
             if(playerType === "A"){
                 if(p1.getScore() === 4){
                     // you won
@@ -569,7 +551,6 @@ ws.onmessage = (message) => {
         case Messages.T_FIG_RETURN_BASE:
             let fig_xy = findFig(msg.data.id); // Find the received figure by its id 
             fig_xy.setCurrPos(fig_xy.getHomePos());
-            console.log("haiahasd");
             
             break;
         default:
@@ -578,18 +559,6 @@ ws.onmessage = (message) => {
 }
 
 
-// ws.onmessage = function (event) {
-//     var msg = JSON.parse(event.data);
-//     switch (msg.type) {
-//         case "something":
-            
-//             break;
-    
-//         default:
-//             break;
-//     }
-//     console.log(event.data);
-// }
 
 
 

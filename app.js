@@ -29,7 +29,7 @@ app.get("/play", function(req, res){
     res.sendFile("game.html", { root: "./public"});
 });
 
-console.log(stats.gamesInitialized);
+
 
 let currentGame = new Game(stats.gamesInitialized++);
 let connectionID = 0;
@@ -48,9 +48,6 @@ wss.on("connection", function connection(ws){
     let playerType = currentGame.addPlayer(connection);
     // add the game to the websockets dict.
     websockets[connection.id] = currentGame;
-    console.log(stats);
-
-    console.log(playerType);
 
     connection.send(playerType === "one" ? messages.S_PLAYER_A : messages.S_PLAYER_B);
 
@@ -70,22 +67,18 @@ wss.on("connection", function connection(ws){
         let currentGameObject = websockets[connection.id];
         let isPlayerOne = currentGameObject.playerOne === connection ? true : false;
         // TODO a link between client and server.
-        console.log(isPlayerOne);
-        console.log(message);
         let msg = JSON.parse(message);
         switch (msg.type) {
             case messages.T_DICE_VALUE:
                 if(isPlayerOne){
                     if(currentGameObject.getPlayerTwo() !== null){
                         currentGameObject.getPlayerTwo().send(message);
-                    }
-                    console.log(msg.data);
+
                 }
                 else{
                     if(currentGameObject.getPlayerOne() !== null){
                         currentGameObject.getPlayerOne().send(message);
                     }
-                    console.log(msg.data);
                 }
                 break;
         
@@ -157,7 +150,6 @@ wss.on("connection", function connection(ws){
 
     
     connection.on("close", function(code){
-        console.log(code);
         // the game over close
         if(code === 3100 || code === "3100"){
             console.log("shutdownscreen");
