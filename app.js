@@ -73,7 +73,7 @@ wss.on("connection", function connection(ws){
                 if(isPlayerOne){
                     if(currentGameObject.getPlayerTwo() !== null){
                         currentGameObject.getPlayerTwo().send(message);
-
+                    }
                 }
                 else{
                     if(currentGameObject.getPlayerOne() !== null){
@@ -81,7 +81,6 @@ wss.on("connection", function connection(ws){
                     }
                 }
                 break;
-        
             case messages.T_CLICKED_FIG_REF:
                 if(isPlayerOne){
                     if(currentGameObject.getPlayerTwo() !== null){

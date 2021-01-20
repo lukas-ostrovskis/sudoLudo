@@ -163,11 +163,12 @@ function Figure(homePos, startPos, ref, id) {
                 score2.innerHTML = '<span style="color: #74c234">Player2@covm</span><span style="color: white">:</span><span style="color: #6692be">~/sudoLudo</span><br>' + p2.getScore() + '/4';
                 let scoreObj = Messages.O_PLAYER_SCORE;
                 scoreObj.data = p2.getScore();
+                ws.send(JSON.stringify(scoreObj));
                 if(p2.getScore() === 4){
                     gameWonBool = true;
                     document.getElementById("dice").style.pointerEvents = "none";
                     let info = document.querySelector(".info");
-                    if(gs.getPlayerType === "B"){
+                    if(gs.getPlayerType() === "B"){
                         info.innerHTML = "You Won!";
                     } else {
                         info.innerHTML = "You Lost!"
@@ -175,8 +176,6 @@ function Figure(homePos, startPos, ref, id) {
                     info.style.display = "auto";
                     ws.close(3050);
                 }
-                ws.send(JSON.stringify(scoreObj));
-
             } 
         } 
         else if(this.startPos == 1) {
@@ -194,7 +193,7 @@ function Figure(homePos, startPos, ref, id) {
                     gameWonBool = true;
                     document.getElementById("dice").style.pointerEvents = "none";
                     let info = document.querySelector(".info");
-                    if(gs.getPlayerType === "A"){
+                    if(gs.getPlayerType() === "A"){
                         info.innerHTML = "You Won!";
                     } else {
                         info.innerHTML = "You Lost!"
