@@ -166,15 +166,22 @@ function Figure(homePos, startPos, ref, id) {
                 ws.send(JSON.stringify(scoreObj));
                 if(p2.getScore() === 4){
                     gameWonBool = true;
-                    document.getElementById("dice").style.pointerEvents = "none";
+                    diceRef.style.pointerEvents = "none";
                     let info = document.querySelector(".info");
                     if(gs.getPlayerType() === "B"){
-                        info.innerHTML = "You Won!";
+                        info.innerHTML = "You Won! Please go to main menu";
+                        info.style.display = "inline";
                     } else {
-                        info.innerHTML = "You Lost!"
+                        info.innerHTML = "You Lost! Please go to main menu"
+                        info.style.display = "inline";
                     }
-                    info.style.display = "auto";
-                    ws.close(3050);
+
+                    for(let i = 0; i < 4; i++){
+                        p1.figures[i].canMove = false;
+                        p1.figures[i].ref.style.animation = "none";
+                        p2.figures[i].canMove = false;
+                        p2.figures[i].ref.style.animation = "none";
+                    }
                 }
             } 
         } 
@@ -191,15 +198,21 @@ function Figure(homePos, startPos, ref, id) {
                 ws.send(JSON.stringify(scoreObj));
                 if(p1.getScore() === 4){
                     gameWonBool = true;
-                    document.getElementById("dice").style.pointerEvents = "none";
+                    diceRef.style.pointerEvents = "none";
                     let info = document.querySelector(".info");
                     if(gs.getPlayerType() === "A"){
-                        info.innerHTML = "You Won!";
+                        info.innerHTML = "You Won! Please go to main menu";
+                        info.style.display = "inline";
                     } else {
-                        info.innerHTML = "You Lost!"
+                        info.innerHTML = "You Lost! Please go to main menu"
+                        info.style.display = "inline";
                     }
-                    info.style.display = "auto";
-                    ws.close(3050);
+                    for(let i = 0; i < 4; i++){
+                        p1.figures[i].canMove = false;
+                        p1.figures[i].ref.style.animation = "none";
+                        p2.figures[i].canMove = false;
+                        p2.figures[i].ref.style.animation = "none";
+                    }
                 }
             }
         }
@@ -442,7 +455,7 @@ let gs = new GameState();
 
 window.onunload = function(){
     ws.send(JSON.stringify({type: "closing"}));
-    ws.close(3100);
+    //ws.close(3100);
 }
 
 
@@ -515,6 +528,9 @@ ws.onmessage = (message) => {
                 gs.setTurn(true); // if another player clicked figure set its turn to true
                 updateGameState(); // update dice
             }
+            if(gameWonBool){
+                document.getElementById("dice").style.pointerEvents = "none";
+            }
             
             break;
 
@@ -543,6 +559,7 @@ ws.onmessage = (message) => {
                 info.innerHTML = "Your opponent left";
                 info.style.display = "inline";
             }
+        
             
             diceRef.style.pointerEvents = "none";
             diceRef.style.animation = "none";
